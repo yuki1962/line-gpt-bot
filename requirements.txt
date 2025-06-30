@@ -1,0 +1,5 @@
+flask
+python-dotenv
+openai
+line-bot-sdk
+gunicorn
