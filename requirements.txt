@@ -1,5 +1,5 @@
 flask
 python-dotenv
-openai
 line-bot-sdk
+google-generativeai
 gunicorn
