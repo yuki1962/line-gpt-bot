@@ -1,17 +1,20 @@
+import os
+import google.generativeai as genai
 from flask import Flask, request, abort
 from linebot import LineBotApi, WebhookHandler
-from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage
-import openai
-import os
+from linebot.exceptions import InvalidSignatureError
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 
 line_bot_api = LineBotApi(os.getenv("LINE_CHANNEL_ACCESS_TOKEN"))
 handler = WebhookHandler(os.getenv("LINE_CHANNEL_SECRET"))
 
-from openai import OpenAI
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+model = genai.GenerativeModel('gemini-pro')
 
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -26,13 +29,8 @@ def callback():
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     user_input = event.message.text
-
-    response = client.chat.completions.create(
-        model="gpt-3.5-turbo",
-        messages=[{"role": "user", "content": user_input}]
-    )
-
-    reply_text = response.choices[0].message.content.strip()
+    response = model.generate_content(user_input)
+    reply_text = response.text.strip()
     line_bot_api.reply_message(
         event.reply_token,
         TextSendMessage(text=reply_text)
