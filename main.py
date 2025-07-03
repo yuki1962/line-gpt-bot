@@ -18,7 +18,7 @@ handler = WebhookHandler(LINE_CHANNEL_SECRET)
 
 # Gemini初期化
 genai.configure(api_key=GEMINI_API_KEY)
-model = genai.GenerativeModel("gemini-2.5-pro-latest")
+model = genai.GenerativeModel("gemini-1.5-pro-latest")
 
 app = Flask(__name__)
 
